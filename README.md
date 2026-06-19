@@ -150,6 +150,21 @@ Response
 
 ## Menu Endpoints
 
+### Register & Login
+
+```http
+POST /api/v1/auth/register
+```
+
+```http
+POST /api/v1/auth/register
+```
+
+### Create Menu
+
+```http
+POST /api/v1/menus
+
 ### Create Menu
 
 ```http
@@ -167,20 +182,6 @@ GET /api/v1/menus
 ```http
 GET /api/v1/menus/:id
 ```
-
-### Update Menu
-
-```http
-PUT /api/v1/menus/:id
-```
-
-### Delete Menu
-
-```http
-DELETE /api/v1/menus/:id
-```
-
----
 
 ## Table Endpoints
 
@@ -201,20 +202,6 @@ GET /api/v1/tables
 ```http
 GET /api/v1/tables/:id
 ```
-
-### Update Table
-
-```http
-PUT /api/v1/tables/:id
-```
-
-### Delete Table
-
-```http
-DELETE /api/v1/tables/:id
-```
-
----
 
 ## Order Endpoints
 
