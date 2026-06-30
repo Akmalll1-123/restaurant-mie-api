@@ -2,6 +2,7 @@ package router
 
 import (
 	tablecontroller "restaurant-mie-api/app/api/controller/table"
+	"restaurant-mie-api/internal/middleware"
 	tablerepo "restaurant-mie-api/repository/table"
 	tableservice "restaurant-mie-api/service/table"
 
@@ -26,7 +27,13 @@ func registerTableRoutes(
 		tableService,
 	)
 
-	api.GET("/tables", tableController.GetAll)
+	tableGroup := api.Group("/tables")
+	{
+		tableGroup.GET("", tableController.GetAll)
 
-	api.POST("/tables", tableController.Create)
+		kasirTableGroup := tableGroup.Group("", middleware.RoleMiddleware("KASIR"))
+		{
+			kasirTableGroup.POST("", tableController.Create)
+		}
+	}
 }

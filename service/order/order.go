@@ -1,7 +1,7 @@
 package order
 
 type CreateOrderRequest struct {
-	TableID uint `json:"table_id"`
+	TableID string `json:"table_id"`
 
 	Notes string `json:"notes"`
 
@@ -9,7 +9,7 @@ type CreateOrderRequest struct {
 }
 
 type UpdateOrderRequest struct {
-	TableID uint `json:"table_id"`
+	TableID string `json:"table_id"`
 
 	Notes string `json:"notes"`
 

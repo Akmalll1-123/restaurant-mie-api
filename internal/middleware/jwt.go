@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"os"
+	jwtutil "restaurant-mie-api/util/jwt"
 	"strings"
 
 	jwtlib "github.com/golang-jwt/jwt/v5"
@@ -18,7 +19,6 @@ type JWTClaims struct {
 func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-
 		auth := c.Request().Header.Get("Authorization")
 
 		if auth == "" {
@@ -35,32 +35,30 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			"Bearer ",
 		)
 
-		token, err := jwtlib.Parse(
+		token, err := jwtlib.ParseWithClaims(
 			tokenString,
-			func(token *jwtlib.Token) (interface{}, error) {
+			&jwtutil.Claims{},
+			func(t *jwtlib.Token) (any, error) {
 				return []byte(os.Getenv("JWT_SECRET")), nil
 			},
 		)
 
 		if err != nil || !token.Valid {
-			return c.JSON(
-				http.StatusUnauthorized,
-				map[string]string{
-					"message": "invalid token",
-				},
-			)
+			return c.JSON(http.StatusUnauthorized, map[string]string{"message": "invalid token"})
 		}
 
-		mapClaims := token.Claims.(jwtlib.MapClaims)
+		claims, ok := token.Claims.(*jwtutil.Claims)
+		if !ok {
+			return c.JSON(http.StatusUnauthorized, map[string]string{
+				"message": "invalid claims",
+			})
+		}
 
-		c.Set(
-			"user",
-			&JWTClaims{
-				ID:    uint(mapClaims["id"].(float64)),
-				Email: mapClaims["email"].(string),
-				Role:  mapClaims["role"].(string),
-			},
-		)
+		c.Set("user", &JWTClaims{
+			ID:    claims.ID,
+			Email: claims.Subject,
+			Role:  claims.Role,
+		})
 
 		return next(c)
 	}

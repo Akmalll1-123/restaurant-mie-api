@@ -29,14 +29,14 @@ func (s *Service) Create(
 ) error {
 
 	order := &domain.Order{
-		OrderID: fmt.Sprintf(
+		OrderNo: fmt.Sprintf(
 			"ORD-%d",
 			time.Now().UnixNano(),
 		),
 
 		UserID: userID,
 
-		TableID: req.TableID,
+		TableNo: req.TableID,
 
 		Status: domain.OrderPending,
 
@@ -168,7 +168,7 @@ func (s *Service) Update(
 
 	order.TotalPrice = total
 	order.Notes = req.Notes
-	order.TableID = req.TableID
+	order.TableNo = req.TableID
 
 	return s.repo.Update(
 		ctx,

@@ -2,6 +2,7 @@ package router
 
 import (
 	ordercontroller "restaurant-mie-api/app/api/controller/order"
+	"restaurant-mie-api/internal/middleware"
 	orderrepo "restaurant-mie-api/repository/order"
 	orderservice "restaurant-mie-api/service/order"
 
@@ -24,11 +25,17 @@ func registerOrderRoutes(
 		orderService,
 	)
 
-	api.POST("/orders", orderController.Create)
+	kasirorderGroup := api.Group("/orders", middleware.JWTMiddleware, middleware.RoleMiddleware("KASIR"))
+	{
+		kasirorderGroup.PATCH("/:id/status", orderController.UpdateStatus)
 
-	api.GET("/orders/:id", orderController.GetByID)
+		kasirorderGroup.PUT("/:id", orderController.Update)
+	}
 
-	api.PATCH("/orders/:id/status", orderController.UpdateStatus)
+	userorderGroup := api.Group("/orders", middleware.JWTMiddleware, middleware.RoleMiddleware("USER"))
+	{
+		userorderGroup.POST("", orderController.Create)
 
-	api.PUT("/orders/:id", orderController.Update)
+		userorderGroup.GET("/:id", orderController.GetByID)
+	}
 }

@@ -39,7 +39,7 @@ func (o *OrderController) Create(
 		)
 	}
 
-	claims := c.Get("user").(*custommiddleware.JWTClaims)
+	claims, _ := c.Get("user").(*custommiddleware.JWTClaims)
 
 	err := o.service.Create(
 		c.Request().Context(),
@@ -87,6 +87,14 @@ func (o *OrderController) GetByID(
 		c.Request().Context(),
 		uint(id),
 	)
+
+	claims, _ := c.Get("user").(*custommiddleware.JWTClaims)
+
+	if order.UserID != claims.ID {
+		return c.JSON(http.StatusForbidden, map[string]string{
+			"message": "You do not have permission to view this order",
+		})
+	}
 
 	if err != nil {
 

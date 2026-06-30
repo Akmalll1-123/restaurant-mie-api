@@ -2,6 +2,7 @@ package router
 
 import (
 	menucontroller "restaurant-mie-api/app/api/controller/menu"
+	"restaurant-mie-api/internal/middleware"
 	menurepo "restaurant-mie-api/repository/menu"
 	menuservice "restaurant-mie-api/service/menu"
 
@@ -26,13 +27,16 @@ func registerMenuRoutes(
 		menuService,
 	)
 
-	api.GET(
-		"/menus",
-		menuController.GetAll,
-	)
+	menusGroup := api.Group("/menus", middleware.JWTMiddleware)
+	{
+		authenticatedMenusGroup := menusGroup.Group("", middleware.RoleMiddleware("USER", "KASIR"))
+		{
+			authenticatedMenusGroup.GET("", menuController.GetAll)
+		}
 
-	api.POST(
-		"/menus",
-		menuController.Create,
-	)
+		userMenusGroup := menusGroup.Group("", middleware.RoleMiddleware("KASIR"))
+		{
+			userMenusGroup.POST("", menuController.Create)
+		}
+	}
 }

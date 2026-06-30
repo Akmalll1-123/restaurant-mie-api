@@ -17,15 +17,13 @@ const (
 type Order struct {
 	ID uint `gorm:"primaryKey"`
 
-	OrderID string `gorm:"unique"`
+	OrderNo string `gorm:"unique"`
 
 	UserID uint
 
 	CashierID *uint
 
-	TableID uint
-
-	Table Table `gorm:"foreignKey:TableID"`
+	TableNo string
 
 	Status string
 
